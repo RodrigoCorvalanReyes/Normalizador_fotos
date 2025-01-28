@@ -1,0 +1,4 @@
+status
+add .
+commit
+push
