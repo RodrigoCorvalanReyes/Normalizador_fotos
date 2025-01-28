@@ -93,8 +93,15 @@ def generar_docx(estructura, ruta_base, ruta_salida, ruta_docx):
             # La imagen procesada se encuentra en 'ruta_salida' con la misma ruta relativa
             ruta_imagen_procesada = construir_ruta_salida(ruta_base, ruta_salida, elemento['ruta'], img_name)
             
-            # Insertamos la imagen en el DOCX
-            document.add_picture(ruta_imagen_procesada, width=Inches(4.0))
+            # Abrir la imagen para obtener sus dimensiones
+            with Image.open(ruta_imagen_procesada) as img:
+                ancho_original, alto_original = img.size
+                # Calcular el ancho en pulgadas manteniendo la proporción
+                ancho_pulgadas = min(4.0, ancho_original / 96)  # 96 DPI es un valor común
+                alto_pulgadas = (alto_original / ancho_original) * ancho_pulgadas
+
+            # Insertamos la imagen en el DOCX con el tamaño calculado
+            document.add_picture(ruta_imagen_procesada, width=Inches(ancho_pulgadas), height=Inches(alto_pulgadas))
             # Añade un párrafo debajo con el nombre
             document.add_paragraph(f"Imagen: {img_name}")
 
